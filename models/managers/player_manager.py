@@ -1,5 +1,6 @@
 import json
 import os
+
 from models.entities.player import Player
 
 
@@ -56,7 +57,20 @@ class PlayerManager:
                 first_name=data["first_name"],
                 birthdate=data["birthdate"],
                 player_id=data["player_id"],
-                total_points=data["total_points"],
+                total_points=data["total_points"]
             )
         else:
             return None
+
+    def get_all_players(self):
+        if os.path.exists(self.players_file):
+            with open(self.players_file, "r") as file:
+                data = json.load(file)
+            return [Player(
+                last_name=player_data["last_name"],
+                first_name=player_data["first_name"],
+                birthdate=player_data["birthdate"],
+                player_id=player_data["player_id"],
+            ) for player_data in data]
+        else:
+            return []

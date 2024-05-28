@@ -17,3 +17,11 @@ class PlayerView:
         birthdate = input("Enter player's birthdate (DD/MM/YYYY): ")
         player_id = input("Enter player's national chess ID (AA12345): ")
         return {"last_name": last_name, "first_name": first_name, "birthdate": birthdate, "player_id": player_id}
+
+    @staticmethod
+    def display_players(players):
+        if not players:
+            print("No players found.")
+        else:
+            for player in players:
+                print(player)
