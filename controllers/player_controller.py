@@ -1,7 +1,7 @@
 from models.entities.player import Player
 from models.managers.player_manager import PlayerManager
-from views.player_view import PlayerView
 from views.main_view import MainView
+from views.player_view import PlayerView
 
 
 class PlayerController:
@@ -10,24 +10,29 @@ class PlayerController:
         self.player_manager = PlayerManager()
 
     def player_menu(self):
-        return_bool = True
-        while return_bool:
+
+        while True:
             choice = PlayerView.manage_players_menu()
-            if choice == "1":
-                return_bool = self.create_player()
-            if choice == "2":
-                return_bool = self.list_all_players()
-            elif choice.lower() == "b":
-                return_bool = MainView.main_menu()
-            elif choice.lower() == "q":
-                exit()
-        exit()
+            match choice:
+                case "1":
+                    self.create_player()
+                case "2":
+                    self.list_all_players()
+                case "b":
+                    MainView.main_menu()
+                    break
+                case "q":
+                    MainView.print_exit()
+                    exit()
+                case _:
+                    MainView.print_error_action()
+                    continue
 
     def create_player(self):
         information = PlayerView().get_players_info()
         player = Player(**information)
         self.player_manager.save_player(player)
-        print(f"Player {player.name} has been added.")
+        MainView.print_success_action(f"Player {player.name} has been added.")
         return True
 
     def list_all_players(self):

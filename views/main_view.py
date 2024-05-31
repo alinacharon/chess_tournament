@@ -1,6 +1,18 @@
 class MainView:
     @staticmethod
-    def main_menu():
+    def print_success_action(info):
+        print(f"\n\x1b[32m{info}\x1b[0m")
+
+    @staticmethod
+    def print_error_action():
+        print(f"\n\x1b[33mInvalid choice. Please try again.\x1b[0m")
+
+    @staticmethod
+    def print_exit():
+        print(f"\n\x1b[34mExiting program. Goodbye!\x1b[0m")
+
+    @classmethod
+    def main_menu(cls):
         print("\n--- Chess Tournament Management ---\n")
         print("1. Manage Players")
         print("2. Manage Tournaments")

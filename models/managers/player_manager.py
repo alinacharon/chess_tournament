@@ -6,7 +6,7 @@ from models.entities.player import Player
 
 class PlayerManager:
     def __init__(self):
-        self.data_folder = "Data"
+        self.data_folder = "data"
         os.makedirs(self.data_folder, exist_ok=True)
         self.players_file = os.path.join(self.data_folder, "players.json")
 
@@ -18,12 +18,11 @@ class PlayerManager:
             "player_id": player.player_id,
             "total_points": player.total_points,
         }
-        self.write_in_db(data_for_db, self.players_file)
+        self.write_in_db(data_for_db)
 
-    @staticmethod
-    def write_in_db(data_for_db, players_file):
-        if os.path.exists(players_file):
-            with open(players_file, "r") as file:
+    def write_in_db(self, data_for_db):
+        if os.path.exists(self.players_file):
+            with open(self.players_file, "r") as file:
                 data = json.load(file)
 
         else:
@@ -36,13 +35,12 @@ class PlayerManager:
 
         else:
             data.append(data_for_db)
-        with open(players_file, "w") as file:
+        with open(self.players_file, "w") as file:
             json.dump(data, file, indent=4)
 
-    @staticmethod
-    def pull_data_for_player_by_id(player_id, players_file):
-        if os.path.exists(players_file):
-            with open(players_file, "r") as file:
+    def pull_data_for_player_by_id(self, player_id):
+        if os.path.exists(self.players_file):
+            with open(self.players_file, "r") as file:
                 data = json.load(file)
             for player in data:
                 if player["player_id"] == player_id:
@@ -50,7 +48,7 @@ class PlayerManager:
         return None
 
     def get_player(self, player_id):
-        data = self.pull_data_for_player_by_id(player_id, self.players_file)
+        data = self.pull_data_for_player_by_id(player_id)
         if data:
             return Player(
                 last_name=data["last_name"],
