@@ -50,13 +50,13 @@ class PlayerManager:
     def get_player(self, player_id):
         data = self.pull_data_for_player_by_id(player_id)
         if data:
-            return Player(
+            player = Player(
                 last_name=data["last_name"],
                 first_name=data["first_name"],
                 birthdate=data["birthdate"],
                 player_id=data["player_id"],
-                total_points=data["total_points"]
             )
+            return player
         else:
             return None
 
@@ -64,11 +64,12 @@ class PlayerManager:
         if os.path.exists(self.players_file):
             with open(self.players_file, "r") as file:
                 data = json.load(file)
-            return [Player(
+            players = [Player(
                 last_name=player_data["last_name"],
                 first_name=player_data["first_name"],
                 birthdate=player_data["birthdate"],
                 player_id=player_data["player_id"],
             ) for player_data in data]
+            return players
         else:
             return []

@@ -27,3 +27,27 @@ class TournamentView:
             print("\n--- List of Tournaments ---\n")
             for tournament in tournaments:
                 print(tournament)
+
+    @classmethod
+    def get_tournament_selection(cls):
+        tournament_name = input("Please enter the tournament name: ")
+        return tournament_name
+
+    @classmethod
+    def manage_selected_tournament(cls, tournament):
+        while True:
+            print(f"\n--- Manage Tournament: {tournament.name} ---\n")
+            print("1. Add Players")
+            print("2. View Tournament Details")
+            print("3. Generate Rounds")
+            print("4. Manage Rounds")
+            print("5. Add Notes")
+            print("b. Back to Tournaments Menu")
+            print("q. Quit")
+            choice = input("Enter your choice: ")
+            return choice
+
+    @classmethod
+    def get_player_selection(cls):
+        player_index = int(input("Enter the number corresponding to the player to add (or 0 to finish): "))
+        return player_index

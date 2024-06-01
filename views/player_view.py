@@ -26,5 +26,5 @@ class PlayerView:
             print("No players found.")
         else:
             print("\n--- List of Players ---\n")
-            for player in players:
-                print(player)
+            for i, player in enumerate(players):
+                print(f"{i + 1}. {player}")

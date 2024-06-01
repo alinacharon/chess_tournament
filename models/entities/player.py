@@ -1,14 +1,18 @@
 class Player:
     def __init__(self, last_name, first_name, birthdate, player_id=None):
         self.last_name = last_name
-        self._first_name = first_name
+        self.first_name = first_name
         self.birthdate = birthdate
         self.player_id = player_id
         self.total_points = 0
 
-    @property
-    def first_name(self):
-        return self._first_name
+    def __eq__(self, other):
+        if isinstance(other, Player):
+            return self.player_id == other.player_id
+        return False
+
+    def __hash__(self):
+        return hash(self.chess_id)
 
     @property
     def name(self):
