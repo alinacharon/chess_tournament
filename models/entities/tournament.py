@@ -12,7 +12,7 @@ class Tournament:
         self.notes = ""
         self.rounds_num = 0
         self.past_matches = set()
-        self.tournament_id = str(uuid.uuid4().hex[:5] )
+        self.tournament_id = str(uuid.uuid4().hex[:5])
 
     def __str__(self):
         return (f"{self.name} ({self.location}), Start date: {self.start_date},"

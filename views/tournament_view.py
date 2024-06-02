@@ -51,3 +51,8 @@ class TournamentView:
     def get_player_selection(cls):
         player_index = int(input("Enter the number corresponding to the player to add (or 0 to finish): "))
         return player_index
+
+    @classmethod
+    def get_tournament_notes(cls):
+        tournament_notes = input("Enter your tournament notes here: ")
+        return tournament_notes
