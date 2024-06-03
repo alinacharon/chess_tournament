@@ -49,29 +49,17 @@ class TournamentController:
                         if len(selected_tournament.registered_players) < 2:
                             MainView.print_info("Error: Minimum of 2 players required to generate rounds.")
                         else:
-                            self.create_rounds(tournament_name)
-                            MainView.print_success_action("Rounds generated successfully.")
-                    # case "4":
-                    #     if not selected_tournament.rounds:
-                    #         print("No rounds generated yet. Please generate rounds first.")
-                    #     else:
-                    #         print("\n--- Tournament Rounds ---\n")
-                    #         for i, round in enumerate(selected_tournament.rounds):
-                    #             print(f"{i + 1}. {round.name}")
-                    #         while True:
-                    #             try:
-                    #                 round_index = int(input(
-                    #                     "Enter the number corresponding to the round to manage (or 0 to go back): "))
-                    #                 if round_index == 0:
-                    #                     break
-                    #                 elif 1 <= round_index <= len(selected_tournament.rounds):
-                    #                     selected_round = selected_tournament.rounds[round_index - 1]
-                    #                     self.manage_matches_menu(selected_round, selected_tournament)
-                    #                     break
-                    #                 else:
-                    #                     print("Invalid round number. Please try again.")
-                    #             except ValueError:
-                    #                 print("Invalid input. Please enter a number.")
+                            try:
+                                self.create_rounds(tournament_name)
+                                MainView.print_success_action(
+                                    f"{selected_tournament.rounds_num} rounds for the tournament {selected_tournament} "
+                                    f"generated successfully.")
+                            except:
+                                MainView.print_info(
+                                    f"Rounds for the tournament {selected_tournament.name} have already been generated.")
+                    case "4":
+                        self.choose_round(tournament_name)
+
                     case "5":
                         self.add_notes_to_tournament(tournament_name)
                     case "b":
@@ -135,19 +123,9 @@ class TournamentController:
         if tournament:
             tournament.rounds_num = len(tournament.registered_players) - 1
             for round_num in range(1, tournament.rounds_num + 1):
-                round = Round(f"Round {round_num}", self)
+                round = Round(f"Round {round_num}")
                 tournament.rounds.append(round)
                 self.tournament_manager.write_in_db(tournament)
-
-    # def add_round_to_tournament(self, tournament_name, round):
-    #     tournament = self.tournament_manager.get_tournament(tournament_name)
-    #     if tournament:
-    #         tournament.rounds.append(round)
-    #         tournament.rounds_num = len(tournament.rounds)
-    #         self.tournament_manager.write_in_db(tournament)
-    #
-    # def add_past_match(self, match):
-    #     self.past_matches.add(match)
 
     def add_notes_to_tournament(self, tournament_name):
         tournament = self.tournament_manager.get_tournament(tournament_name)
@@ -165,3 +143,22 @@ class TournamentController:
     #     if tournament:
     #         Tournament.add_past_match(match)
     #         self.tournament_manager.write_in_db(tournament)
+
+    def choose_round(self, tournament_name):
+        tournament = self.tournament_manager.get_tournament(tournament_name)
+        rounds = self.tournament_manager.get_rounds(tournament_name)
+        TournamentView.display_rounds(rounds)
+
+        while True:
+            try:
+                round_index = TournamentView.get_round_selection()
+                if round_index == 0:
+                    break
+                elif 1 <= round_index <= len(rounds):
+                    selected_round = tournament.rounds[round_index - 1]
+                    self.manage_matches_menu(selected_round, tournament)
+                    break
+                else:
+                    MainView.print_error_action()
+            except ValueError:
+                MainView.print_error_action()

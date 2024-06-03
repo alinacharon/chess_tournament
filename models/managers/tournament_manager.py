@@ -42,9 +42,8 @@ class TournamentManager:
                 for player_id in tournament_data.get("registered_players", [])
             ]
             tournament.rounds = [
-                self.round_manager.round_to_dict(round_data)
+                self.round_manager.dict_to_round(round_data)
                 for round_data in tournament_data.get("rounds", [])
-
             ]
             tournament.notes = tournament_data.get("notes", "")
             tournament.rounds_num = tournament_data.get("rounds_num", 0)
@@ -62,7 +61,7 @@ class TournamentManager:
             "end_date": tournament.end_date,
             "tournament_id": tournament.tournament_id,
             "registered_players": [player.player_id for player in tournament.registered_players],
-            "rounds": tournament.rounds,
+            "rounds": [self.round_manager.round_to_dict(round) for round in tournament.rounds],
             "notes": tournament.notes,
             "rounds_num": tournament.rounds_num,
             "past_matches": list(tournament.past_matches)
@@ -103,3 +102,9 @@ class TournamentManager:
             tournament.tournament_id = data.get("tournament_id", str(uuid.uuid4().hex[:5]))
             return tournament
         return None
+
+    def get_rounds(self, tournament_name):
+        data = self.pull_data_for_tournament(tournament_name)
+        if data:
+            return [self.round_manager.dict_to_round(round_data) for round_data in data["rounds"]]
+        return []

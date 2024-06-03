@@ -2,13 +2,12 @@ import uuid
 
 
 class Round:
-    def __init__(self, name, tournament):
+    def __init__(self, name):
         self.name = name
-        self.matches = []
-        self.tournament = tournament
         self.start_date = None
         self.end_date = None
-        self.tournament_id = str(uuid.uuid4().hex[:5])
+        self.matches = []
+        self.round_id = str(uuid.uuid4().hex[:5])
 
     def add_match(self, match):
         self.matches.append(match)

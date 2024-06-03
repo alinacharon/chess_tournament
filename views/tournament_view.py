@@ -56,3 +56,17 @@ class TournamentView:
     def get_tournament_notes(cls):
         tournament_notes = input("Enter your tournament notes here: ")
         return tournament_notes
+
+    @classmethod
+    def display_rounds(cls, rounds):
+        if not rounds:
+            print("No rounds generated yet. Please generate rounds first.")
+        else:
+            print("\n--- Tournament Rounds ---\n")
+            for i, round in enumerate(rounds):
+                print(f"{i + 1}. {round.name}")
+
+    @classmethod
+    def get_round_selection(cls):
+        round_index = int(input("Enter the number corresponding to the round to manage (or 0 to go back): "))
+        return round_index
