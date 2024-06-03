@@ -13,5 +13,3 @@ venv/
 *.log
 
 Data/*.json
-.DS_Store
-*.pyc
