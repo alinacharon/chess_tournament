@@ -104,7 +104,7 @@ class TournamentManager:
         return None
 
     def get_rounds(self, tournament_name):
-        data = self.pull_data_for_tournament(tournament_name)
-        if data:
-            return [self.round_manager.dict_to_round(round_data) for round_data in data["rounds"]]
+        tournament_data = self.pull_data_for_tournament(tournament_name)
+        if tournament_data:
+            return tournament_data.get("rounds", [])
         return []

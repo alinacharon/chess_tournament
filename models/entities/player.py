@@ -11,6 +11,9 @@ class Player:
             return self.player_id == other.player_id
         return False
 
+    def __hash__(self):
+        return hash(self.player_id)
+
     @property
     def name(self):
         return f'{self.first_name} {self.last_name}'

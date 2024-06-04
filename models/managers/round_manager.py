@@ -9,22 +9,22 @@ class RoundManager:
 
     def round_to_dict(self, round):
         return {
-            "round_id": round.round_id,
-            "name": round.name,
+            "round_id": round['round_id'],
+            "name": round['name'],
             "matches": [
                 {
-                    "match_id": match.match_id,
-                    "name": match.name,
-                    "player1": match.player1.player_id,
-                    "player2": match.player2.player_id,
-                    "score1": match.score1,
-                    "score2": match.score2,
-                    "winner": match.winner.player_id if match.winner else None
+                    "match_id": match['match_id'],
+                    "name": match['name'],
+                    "player1": match['player1']['player_id'],
+                    "player2": match['player2']['player_id'],
+                    "score1": match['score1'],
+                    "score2": match['score2'],
+                    "winner": match['winner']['player_id'] if match['winner'] else None
                 }
-                for match in round.matches
+                for match in round['matches']
             ],
-            "start_date": round.start_date,
-            "end_date": round.end_date
+            "start_date": round['start_date'],
+            "end_date": round['end_date']
         }
 
     def dict_to_round(self, data):
