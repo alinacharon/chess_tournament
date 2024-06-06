@@ -39,6 +39,9 @@ class TournamentController:
 
     def get_tournament_selection(self):
         tournament_name = TournamentView.get_tournament_selection()
+        self.handle_tournament_selection(tournament_name)
+
+    def handle_tournament_selection(self, tournament_name):
         selected_tournament = self.tournament_manager.get_tournament(tournament_name)
         if not selected_tournament:
             MainView.print_error_action()
@@ -56,7 +59,8 @@ class TournamentController:
                         else:
                             if selected_tournament.rounds_num > 0:
                                 MainView.print_info(
-                                    f"Rounds for the tournament {selected_tournament.name} have already been generated.")
+                                    f"Rounds for the tournament {selected_tournament.name} "
+                                    f"have already been generated.")
                             else:
                                 self.create_rounds(tournament_name)
                                 MainView.print_success_action(
@@ -67,11 +71,11 @@ class TournamentController:
                             MainView.print_info("No tournaments yet. Please generate first.")
                         else:
                             self.get_round_selection(tournament_name)
-
                     case "5":
                         self.add_notes_to_tournament(tournament_name)
                     case "b":
-                        MainView.main_menu()
+                        TournamentView.manage_tournaments_menu()
+                        break
                     case "q":
                         MainView.print_exit()
                         exit()
