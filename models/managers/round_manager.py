@@ -8,35 +8,39 @@ class RoundManager:
         self.player_manager = PlayerManager()
 
     def round_to_dict(self, round):
+        if isinstance(round, Round):
+            return {
+                "round_id": round.round_id,
+                "name": round.name,
+                "matches": [self.match_to_dict(match) for match in round.matches],
+                "start_date": round.start_date,
+                "end_date": round.end_date
+            }
+        elif isinstance(round, dict):
+            return self.round_from_dict(round)
+        else:
+            raise TypeError("Expected Round object or dictionary")
+
+    def match_to_dict(self, match):
         return {
-            "round_id": round['round_id'],
-            "name": round['name'],
-            "matches": [
-                {
-                    "match_id": match['match_id'],
-                    "name": match['name'],
-                    "player1": match['player1']['player_id'],
-                    "player2": match['player2']['player_id'],
-                    "score1": match['score1'],
-                    "score2": match['score2'],
-                    "winner": match['winner']['player_id'] if match['winner'] else None
-                }
-                for match in round['matches']
-            ],
-            "start_date": round['start_date'],
-            "end_date": round['end_date']
+            "name": match.name,
+            "player1": match.player1.player_id,
+            "player2": match.player2.player_id,
+            "score1": match.score1,
+            "score2": match.score2,
+            "winner": match.winner.player_id if match.winner else None
         }
 
-    def dict_to_round(self, data):
-        round = Round("round_name")
-        round.name = data["name"],
-        round.start_date = data.get("start_date", None),
-        round.end_date = data.get("end_date", None),
+    def round_from_dict(self, data):
+        round = Round(data["name"])
         round.round_id = data["round_id"]
+        round.start_date = data.get("start_date", None)
+        round.end_date = data.get("end_date", None)
 
         round.matches = [
             Match(
                 name=match_data["name"],
+                round=round,
                 player1=self.player_manager.get_player(match_data["player1"]),
                 player2=self.player_manager.get_player(match_data["player2"]),
                 score1=match_data["score1"],

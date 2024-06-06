@@ -9,9 +9,6 @@ class Round:
         self.matches = []
         self.round_id = str(uuid.uuid4().hex[:5])
 
-    def add_match(self, match):
-        self.matches.append(match)
-
     def is_finished(self):
         return all(match.is_finished() for match in self.matches)
 

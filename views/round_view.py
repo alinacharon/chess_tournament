@@ -13,11 +13,9 @@ class RoundView:
         round_index = int(input("Enter the number corresponding to the round to manage (or 0 to go back): "))
         return round_index
 
-
-
     @classmethod
     def manage_selected_round(cls, round):
-        print(f"\n--- Manage Matches for {round["name"]} ---\n")
+        print(f"\n--- Manage Matches for {round.name} ---\n")
         print("1. Generate Matches")
         print("2. Select Match")
         print("b. Back to Tournament Menu")

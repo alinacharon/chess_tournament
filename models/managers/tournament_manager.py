@@ -42,12 +42,11 @@ class TournamentManager:
                 for player_id in tournament_data.get("registered_players", [])
             ]
             tournament.rounds = [
-                self.round_manager.dict_to_round(round_data)
+                self.round_manager.round_to_dict(round_data)
                 for round_data in tournament_data.get("rounds", [])
             ]
             tournament.notes = tournament_data.get("notes", "")
             tournament.rounds_num = tournament_data.get("rounds_num", 0)
-            tournament.past_matches = set(tournament_data.get("past_matches", []))
             tournament.tournament_id = tournament_data.get("tournament_id", str(uuid.uuid4().hex[:5]))
             tournaments.append(tournament)
         return tournaments
@@ -64,7 +63,6 @@ class TournamentManager:
             "rounds": [self.round_manager.round_to_dict(round) for round in tournament.rounds],
             "notes": tournament.notes,
             "rounds_num": tournament.rounds_num,
-            "past_matches": list(tournament.past_matches)
         }
 
         for i, tournament_data in enumerate(data):
@@ -95,10 +93,11 @@ class TournamentManager:
             tournament.registered_players = [
                 self.player_manager.get_player(player_id) for player_id in data.get("registered_players", [])
             ]
-            tournament.rounds = data.get("rounds", [])
+            tournament.rounds = [
+                self.round_manager.round_from_dict(round_data) for round_data in data.get("rounds", [])
+            ]
             tournament.notes = data.get("notes", "")
             tournament.rounds_num = data.get("rounds_num", 0)
-            tournament.past_matches = set(data.get("past_matches", []))
             tournament.tournament_id = data.get("tournament_id", str(uuid.uuid4().hex[:5]))
             return tournament
         return None
@@ -108,3 +107,13 @@ class TournamentManager:
         if tournament_data:
             return tournament_data.get("rounds", [])
         return []
+
+    def get_round(self, tournament_name, round_id):
+        tournament_data = self.pull_data_for_tournament(tournament_name)
+        if tournament_data:
+            rounds = tournament_data.get("rounds", [])
+            for round_data in rounds:
+                if round_data.get("round_id") == round_id:
+                    return round_data
+        return None
+

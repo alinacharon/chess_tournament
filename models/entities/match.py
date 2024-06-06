@@ -2,7 +2,7 @@ import uuid
 
 
 class Match:
-    def __init__(self, name, player1, player2, score1=0, score2=0, winner=None, match_id=None):
+    def __init__(self, name, round, player1, player2, score1=0, score2=0, winner=None, match_id=None):
         self.name = name
         self.player1 = player1
         self.player2 = player2
@@ -10,6 +10,7 @@ class Match:
         self.score2 = score2
         self.winner = winner
         self.match_id = match_id or str(uuid.uuid4().hex[:5])
+        self.round = round
 
     def set_result(self, winner):
         if winner == self.player1:
@@ -25,6 +26,7 @@ class Match:
 
     def is_finished(self):
         return self.winner is not None
+
 
     def __str__(self):
         if self.winner is None:

@@ -42,7 +42,7 @@ class TournamentView:
             print("3. Generate Rounds")
             print("4. Manage Rounds")
             print("5. Add Notes")
-            print("b. Back to Tournaments Menu")
+            print("b. Back to Main Menu")
             print("q. Quit")
             choice = input("Enter your choice: ")
             return choice

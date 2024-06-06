@@ -1,4 +1,3 @@
-from models.entities import tournament
 from models.entities.match import Match
 from models.entities.round import Round
 from models.entities.tournament import Tournament
@@ -64,12 +63,15 @@ class TournamentController:
                                     f"Rounds for the tournament {selected_tournament.name} "
                                     f"generated successfully.")
                     case "4":
-                        self.get_round_selection(tournament_name)
+                        if not selected_tournament.rounds:
+                            MainView.print_info("No tournaments yet. Please generate first.")
+                        else:
+                            self.get_round_selection(tournament_name)
 
                     case "5":
                         self.add_notes_to_tournament(tournament_name)
                     case "b":
-                        TournamentView.manage_tournaments_menu()
+                        MainView.main_menu()
                     case "q":
                         MainView.print_exit()
                         exit()
@@ -206,7 +208,7 @@ class TournamentController:
                             except ValueError:
                                 print("Invalid input. Please enter a number.")
                 case "b":
-                    pass
+                    TournamentView.manage_tournament_menu()
                 case "q":
                     print("You have exited the program")
                     exit()
@@ -214,41 +216,51 @@ class TournamentController:
                     MainView.print_error_action()
                     continue
 
-    def generate_matches_for_round(self, selected_round,tournament_name):
-        print(selected_round)
-        if selected_round["matches"]:
+    def generate_matches_for_round(self, selected_round, tournament_name):
+        if selected_round.matches:
             print(f"Matches for {selected_round.name} have already been generated.")
             return
+
         tournament = self.tournament_manager.get_tournament(tournament_name)
-        print(tournament.registered_players)
-    #     players = tournament.registered_players
-    #     players.sort(key=lambda p: p.total_points, reverse=True)
-    #
-    #     available_players = set(players)
-    #     matches = []
-    #
-    #     while len(available_players) >= 2:
-    #         player1 = available_players.pop()
-    #         for player2 in sorted(available_players, key=lambda p: p.total_points, reverse=True):
-    #             if (player1, player2) not in tournament.past_matches and (
-    #                     player2, player1) not in tournament.past_matches:
-    #                 available_players.remove(player2)
-    #                 match = Match(f"Match {len(matches) + 1}", player1, player2, 0, 0, None)
-    #                 matches.append(match)
-    #                 tournament.past_matches.add((player1, player2))
-    #                 break
-    #
-    #     tournament.matches = matches
-    #     self.tournament_manager.write_in_db(tournament)
-    #     print(f"\n--- Generated Matches for {selected_round.name} ---")
-    #     for match in selected_round.matches:
-    #         print(f"- {match.name}: {match.player1.name} vs. {match.player2.name}")
-    #
-    # def add_past_match_to_tournament(self, tournament_name, match):
-    #     tournament = self.tournament_manager.get_tournament(tournament_name)
-    #     if tournament:
-    #         tournament.past_matches.add((match.player1, match.player2))
-    #         self.tournament_manager.write_in_db(tournament)
-    #         print(f"Match '{match.name}' added to tournament history.")
-    #     else:
-    #         MainView.print_info(f"Tournament {tournament_name} not found")
+
+        if not tournament:
+            print(f"Tournament {tournament_name} not found")
+            return
+
+        players = sorted(tournament.registered_players, key=lambda p: p.total_points, reverse=True)
+
+        available_players = set(players)
+        matches = []
+
+        while len(available_players) >= 2:
+            player1 = available_players.pop()
+            for player2 in sorted(available_players, key=lambda p: p.total_points, reverse=True):
+                if (player1.player_id, player2.player_id) not in tournament.past_matches and \
+                        (player2.player_id, player1.player_id) not in tournament.past_matches:
+                    available_players.remove(player2)
+                    match = Match(f"Match {len(matches) + 1}", selected_round, player1, player2, 0, 0, None)
+                    matches.append(match)
+                    tournament.past_matches.add((player1.player_id, player2.player_id))
+                    selected_round.matches.append(match)
+                    self.add_match_to_round(tournament_name, selected_round, match)
+                    break
+
+        print(f"\n--- Generated Matches for Round {selected_round.name} ---")
+        for match in matches:
+            print(f"- {match.name}: {match.player1.name} vs. {match.player2.name}")
+
+    def add_match_to_round(self, tournament_name, selected_round, match):
+        round_id = selected_round.round_id
+        tournament = self.tournament_manager.get_tournament(tournament_name)
+        if not tournament:
+            MainView.print_info(f"Tournament {tournament_name} not found")
+            return
+
+        for round in tournament.rounds:
+            if isinstance(round, dict):
+                round = self.tournament_manager.get_round(tournament_name, round_id)
+            if round.round_id == round_id:
+                round.matches.append(match)
+                break
+
+        self.tournament_manager.write_in_db(tournament)
