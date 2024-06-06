@@ -27,7 +27,6 @@ class Match:
     def is_finished(self):
         return self.winner is not None
 
-
     def __str__(self):
         if self.winner is None:
             return f"{self.player1.name} ({self.score1}) vs. {self.player2.name} ({self.score2}) - Not finished"

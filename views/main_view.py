@@ -5,7 +5,7 @@ class MainView:
 
     @staticmethod
     def print_error_action():
-        print(f"\n\x1b[33mInvalid input. Please enter a valid choice or a valid file name.\x1b[0m")
+        print(f"\n\x1b[33mInvalid input. Please enter a valid choice or a valid name.\x1b[0m")
 
     @staticmethod
     def print_exit():

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from models.entities.match import Match
 from models.entities.round import Round
 from models.entities.tournament import Tournament
@@ -175,14 +177,14 @@ class TournamentController:
                 elif 1 <= round_index <= len(rounds_data):
                     selected_round_data = rounds_data[round_index - 1]
                     selected_round = self.round_manager.round_to_dict(selected_round_data)
-                    self.handle_round_choice(selected_round, tournament_name)
+                    self.handle_selected_round(selected_round, tournament_name)
 
                 else:
                     MainView.print_error_action()
             except ValueError:
                 MainView.print_error_action()
 
-    def handle_round_choice(self, selected_round, tournament_name):
+    def handle_selected_round(self, selected_round, tournament_name):
         while True:
             choice = RoundView.manage_selected_round(selected_round)
             match choice:
@@ -195,26 +197,24 @@ class TournamentController:
                         MatchView.display_matches(selected_round.matches)
                         while True:
                             try:
-                                match_index = int(input("Enter the number corresponding to the match to start "
-                                                        "(or 0 to go back): "))
+                                match_index = MatchView.get_match_selection()
                                 if match_index == 0:
                                     break
                                 elif 1 <= match_index <= len(selected_round.matches):
                                     selected_match = selected_round.matches[match_index - 1]
                                     if selected_match.is_finished():
-                                        print(f"{selected_match.name} has already been played.")
+                                        print(selected_match)
+                                        MainView.print_info(f"{selected_match.name} has already been played.")
                                     else:
-                                        pass
-                                        # self.start_match(selected_match, tournament)
-                                        # break
+                                        self.handle_match_choice(selected_round, selected_match, tournament_name)
                                 else:
-                                    print("Invalid match number. Please try again.")
+                                    MainView.print_error_action()
                             except ValueError:
-                                print("Invalid input. Please enter a number.")
+                                MainView.print_error_action()
                 case "b":
-                    TournamentView.manage_tournament_menu()
+                    TournamentView.manage_tournaments_menu()
                 case "q":
-                    print("You have exited the program")
+                    MainView.print_exit()
                     exit()
                 case _:
                     MainView.print_error_action()
@@ -268,3 +268,45 @@ class TournamentController:
                 break
 
         self.tournament_manager.write_in_db(tournament)
+
+    def handle_match_choice(self, selected_round, selected_match, tournament_name):
+
+        while True:
+            choice = MatchView.manage_match_selection(selected_match)
+            match choice:
+                case "1":
+                    self.start_match(selected_round, tournament_name)
+                case "2":
+                    pass
+                    if selected_match.is_finished():
+                        MainView.print_info(f"{selected_match.name} has already been played.")
+                    else:
+                        pass
+                        # self.end_match(selected_round, selected_match, tournament_name)
+                case "b":
+                    TournamentView.manage_tournaments_menu()
+                case "q":
+                    MainView.print_exit()
+                    exit()
+                case _:
+                    MainView.print_error_action()
+                    continue
+
+    def start_match(self, selected_round, tournament_name):
+        tournament = self.tournament_manager.get_tournament(tournament_name)
+
+        if selected_round.start_date is None:
+            selected_round.start_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            for round in tournament.rounds:
+                if round.round_id == selected_round.round_id:
+                    round.start_date = selected_round.start_date
+                    break
+            self.tournament_manager.write_in_db(tournament)
+            MainView.print_success_action("You have successfully started the match!")
+
+    # def end_match(self, selected_round, selected_match, tournament_name):
+    #
+    #     match = selected_match.get_match()
+    #
+    #     if selected_round.start_date is None:
+    #         selected_round.start_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")

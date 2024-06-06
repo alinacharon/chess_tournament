@@ -15,5 +15,5 @@ class Tournament:
         self.tournament_id = str(uuid.uuid4().hex[:5])
 
     def __str__(self):
-        return (f"Tournament name: {self.name} , Start date: {self.start_date}, "
+        return (f"Tournament name: {self.name}, Start date: {self.start_date},"
                 f" End date: {self.end_date}, ({self.location})")

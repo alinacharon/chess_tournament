@@ -28,7 +28,8 @@ class RoundManager:
             "player2": match.player2.player_id,
             "score1": match.score1,
             "score2": match.score2,
-            "winner": match.winner.player_id if match.winner else None
+            "winner": match.winner.player_id if match.winner else None,
+            "match_id": match.match_id
         }
 
     def round_from_dict(self, data):
@@ -45,7 +46,8 @@ class RoundManager:
                 player2=self.player_manager.get_player(match_data["player2"]),
                 score1=match_data["score1"],
                 score2=match_data["score2"],
-                winner=self.player_manager.get_player(match_data["winner"]) if match_data["winner"] else None
+                winner=self.player_manager.get_player(match_data["winner"]) if match_data["winner"] else None,
+                match_id=match_data["match_id"],
             )
             for match_data in data["matches"]
         ]

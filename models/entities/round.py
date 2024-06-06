@@ -13,8 +13,7 @@ class Round:
         return all(match.is_finished() for match in self.matches)
 
     def get_report(self):
-        report = f"  {
-        self.name} - Start: {self.start_date}, End: {self.end_date}\n"
+        report = f"  {self.name} - Start: {self.start_date}, End: {self.end_date}\n"
         for match in self.matches:
             report += f"    - {match}\n"
         return report

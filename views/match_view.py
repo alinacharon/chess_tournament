@@ -7,13 +7,29 @@ class MatchView:
         print("2. Manage selected match ---")
         print("b. Back")
         print("q. Quit")
-        choice = input("Enter the result of the match: ")
+        choice = input("Enter your choice: ")
         return choice
 
     @classmethod
     def display_match(cls, match):
         print(f"\n--- Match: {match.name} ---")
         print(f"  {match.player1.name} vs. {match.player2.name}")
+
+    @classmethod
+    def get_match_selection(cls):
+        match_index = int(input("Enter the number corresponding to the match to start "
+                                "(or 0 to go back): "))
+        return match_index
+
+    @classmethod
+    def manage_match_selection(cls, match):
+        print(f"\n--- Menu for {match.name}:  ---")
+        print("1. Start the match ---")
+        print("2. End the match ---")
+        print("b. Back")
+        print("q. Quit")
+        choice = input("Enter your choice: ")
+        return choice
 
     @classmethod
     def manage_match_menu(cls, match):
