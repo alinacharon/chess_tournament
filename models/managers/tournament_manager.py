@@ -117,10 +117,3 @@ class TournamentManager:
                     return round_data
         return None
 
-    def get_match(self, tournament_name, round_id, match_id):
-        round_data = self.get_round(tournament_name, round_id)
-        if round_data:
-            for match_data in round_data.get("matches", []):
-                if match_data.get("match_id") == match_id:
-                    return match_data
-        return None

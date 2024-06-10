@@ -9,8 +9,7 @@ class Round:
         self.matches = []
         self.round_id = str(uuid.uuid4().hex[:5])
 
-    def is_finished(self):
-        return all(match.is_finished() for match in self.matches)
+
 
     def get_report(self):
         report = f"  {self.name} - Start: {self.start_date}, End: {self.end_date}\n"

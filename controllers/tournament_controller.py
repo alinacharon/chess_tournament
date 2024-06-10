@@ -38,6 +38,7 @@ class TournamentController:
                 case _:
                     MainView.print_error_action()
                     continue
+            break
 
     def get_tournament_selection(self):
         tournament_name = TournamentView.get_tournament_selection()
@@ -61,7 +62,7 @@ class TournamentController:
                         else:
                             if selected_tournament.rounds_num > 0:
                                 MainView.print_info(
-                                    f"Rounds for the tournament {selected_tournament.name} "
+                                    f"Rounds for the tournament '{selected_tournament.name}' "
                                     f"have already been generated.")
                             else:
                                 self.create_rounds(tournament_name)
@@ -70,7 +71,7 @@ class TournamentController:
                                     f"generated successfully.")
                     case "4":
                         if not selected_tournament.rounds:
-                            MainView.print_info("No tournaments yet. Please generate first.")
+                            MainView.print_info("\nNo rounds yet. Please generate first.")
                         else:
                             self.get_round_selection(tournament_name)
                     case "5":
@@ -120,16 +121,11 @@ class TournamentController:
                 elif 1 <= player_index <= len(players):
                     selected_player = players[player_index - 1]
                     tournament = self.tournament_manager.get_tournament(tournament_name)
-                    if not tournament:
-                        MainView.print_info(f"Tournament {tournament_name} not found")
-                        return
                     if selected_player in tournament.registered_players:
-                        MainView.print_info(f"{selected_player.name} is already registered for this tournament.")
-                        return
+                        MainView.print_info(f"\n{selected_player.name} is already registered for this tournament.\n")
+                        continue
                     else:
                         self.add_player_to_tournament(tournament_name, selected_player)
-                else:
-                    MainView.print_error_action()
             except ValueError:
                 MainView.print_error_action()
 
@@ -183,6 +179,7 @@ class TournamentController:
                     MainView.print_error_action()
             except ValueError:
                 MainView.print_error_action()
+            break
 
     def handle_selected_round(self, selected_round, tournament_name):
         while True:
@@ -202,13 +199,8 @@ class TournamentController:
                                     break
                                 elif 1 <= match_index <= len(selected_round.matches):
                                     selected_match = selected_round.matches[match_index - 1]
-                                    if selected_match.is_finished():
-                                        print(selected_match)
-                                        MainView.print_info(f"{selected_match.name} has already been played.")
-                                    else:
-                                        self.handle_match_choice(selected_round, selected_match, tournament_name)
-                                else:
-                                    MainView.print_error_action()
+                                    self.handle_match_choice(selected_round, selected_match, tournament_name)
+
                             except ValueError:
                                 MainView.print_error_action()
                 case "b":
@@ -277,12 +269,12 @@ class TournamentController:
                 case "1":
                     self.start_match(selected_round, tournament_name)
                 case "2":
-                    pass
-                    if selected_match.is_finished():
-                        MainView.print_info(f"{selected_match.name} has already been played.")
+                    if selected_round.start_date is None:
+                        MainView.print_info("The match is not started. Please start the match first.")
+                    elif selected_match.score1 == 0 and selected_match.score2 == 0:
+                        self.handle_match_result(tournament_name, selected_round, selected_match)
                     else:
-                        pass
-                        # self.end_match(selected_round, selected_match, tournament_name)
+                        MainView.print_info(f"The match {selected_match.name} has been already played")
                 case "b":
                     TournamentView.manage_tournaments_menu()
                 case "q":
@@ -303,10 +295,75 @@ class TournamentController:
                     break
             self.tournament_manager.write_in_db(tournament)
             MainView.print_success_action("You have successfully started the match!")
+        else:
+            MainView.print_info("You have already started the match!")
 
-    # def end_match(self, selected_round, selected_match, tournament_name):
-    #
-    #     match = selected_match.get_match()
-    #
-    #     if selected_round.start_date is None:
-    #         selected_round.start_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    def handle_match_result(self, tournament_name, selected_round, selected_match):
+        tournament = self.tournament_manager.get_tournament(tournament_name)
+        while True:
+            choice = MatchView.set_match_result_menu(selected_match)
+            match choice:
+                case "1":
+                    selected_match.set_result(selected_match.player1)
+                    selected_match.player1.total_points += 1
+                    break
+                case "2":
+                    selected_match.set_result(selected_match.player2)
+                    selected_match.player2.total_points += 1
+                    break
+                case "3":
+                    selected_match.set_result(None)
+                    selected_match.player1.total_points += 0.5
+                    selected_match.player2.total_points += 0.5
+                    MainView.print_success_action("Draw match.")
+                    break
+                case _:
+                    MainView.print_error_action()
+                    continue
+
+        self.player_manager.save_player(selected_match.player1)
+        self.player_manager.save_player(selected_match.player2)
+        self.set_end_round_date(selected_round, tournament_name)
+        self.update_tournament_with_match_result(tournament, selected_round, selected_match)
+        self.tournament_manager.write_in_db(tournament)
+        MainView.print_success_action(f"'{selected_match.name}' ended successfully.")
+
+    def update_tournament_with_match_result(self, tournament, selected_round, selected_match):
+        for round in tournament.rounds:
+            if round.round_id == selected_round.round_id:
+                for match in round.matches:
+                    if match.match_id == selected_match.match_id:
+                        match.winner = selected_match.winner
+                        match.score1 = selected_match.score1
+                        match.score2 = selected_match.score2
+                        break
+
+    def set_end_round_date(self, selected_round, tournament_name):
+        tournament = self.tournament_manager.get_tournament(tournament_name)
+        print("Checking if all matches are finished...")
+        if self.round_is_finished(selected_round, tournament_name):
+            selected_round.end_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            print(f"All matches finished, setting end date: {selected_round.end_date}")
+            for round in tournament.rounds:
+                if round.round_id == selected_round.round_id:
+                    round.end_date = selected_round.end_date
+                    break
+            self.tournament_manager.write_in_db(tournament)
+            MainView.print_success_action("The current round has been ended!")
+        else:
+            print("Not all matches are finished yet.")
+
+    def round_is_finished(self, selected_round, tournament_name):
+        tournament = self.tournament_manager.get_tournament(tournament_name)
+        if not tournament:
+            MainView.print_info(f"Tournament {tournament_name} not found")
+            return False
+
+        all_matches_finished = all(match.score1 != 0 and match.score2 != 0 for match in selected_round.matches)
+
+        if all_matches_finished:
+            MainView.print_success_action(f"All matches in round '{selected_round.name}' are finished.")
+        else:
+            MainView.print_info(f"Not all matches in round '{selected_round.name}' are finished.")
+
+        return all_matches_finished

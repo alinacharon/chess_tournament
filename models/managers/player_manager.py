@@ -37,6 +37,7 @@ class PlayerManager:
             data.append(data_for_db)
         with open(self.players_file, "w") as file:
             json.dump(data, file, indent=4)
+            file.flush()
 
     def pull_data_for_player_by_id(self, player_id):
         if os.path.exists(self.players_file):

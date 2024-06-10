@@ -1,7 +1,5 @@
 class PlayerView:
 
-
-
     @classmethod
     def manage_players_menu(cls):
         print("\n--- Manage Players ---\n")

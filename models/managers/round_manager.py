@@ -52,3 +52,4 @@ class RoundManager:
             for match_data in data["matches"]
         ]
         return round
+

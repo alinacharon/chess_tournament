@@ -57,20 +57,5 @@ class TournamentView:
         tournament_notes = input("Enter your tournament notes here: ")
         return tournament_notes
 
-    @classmethod
-    def manage_match_menu(cls, match):
-        print(f"\n--- Match: {match.name} ---")
-        print(f"1. {match.player1.name} wins")
-        print(f"2. {match.player2.name} wins")
-        print("3. Draw")
-        choice = input("Enter the result of the match: ")
-        return choice
 
-    @classmethod
-    def display_matches(cls, matches):
-        if not matches:
-            print("Please generate matches for this round first.")
-        else:
-            print("\n--- Available Matches ---\n")
-            for i, match in enumerate(matches):
-                print(f"{i + 1}. {match.name}: {match}")
+

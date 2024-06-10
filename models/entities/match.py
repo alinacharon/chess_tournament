@@ -20,12 +20,11 @@ class Match:
             self.winner = winner
             self.score2 = 1
         else:
-            self.winner = "Draw match"
+            self.winner = None
             self.score1 = 0.5
             self.score2 = 0.5
 
-    def is_finished(self):
-        return self.winner is not None
+
 
     def __str__(self):
         if self.winner is None:
@@ -34,4 +33,4 @@ class Match:
             return f"{self.player1.name} ({self.score1}) vs. {self.player2.name} ({self.score2}) - Draw"
         else:
             return (f"{self.player1.name} ({self.score1}) vs. {self.player2.name} "
-                    f"({self.score2}) - Winner: {self.winner.player.name}")
+                    f"({self.score2}) - Winner: {self.winner.name}")
