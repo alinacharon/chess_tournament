@@ -31,7 +31,7 @@ class PlayerController:
     def create_player(self):
         information = PlayerView().get_players_info()
         player = Player(**information)
-        self.player_manager.save_player(player)
+        self.player_manager.write_in_db(player)
         MainView.print_success_action(f"Player {player.name} has been added.")
         return True
 
