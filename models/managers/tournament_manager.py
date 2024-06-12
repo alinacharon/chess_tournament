@@ -107,4 +107,3 @@ class TournamentManager:
         if tournament_data:
             return tournament_data.get("rounds", [])
         return []
-

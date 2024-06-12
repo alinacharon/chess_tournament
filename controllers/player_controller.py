@@ -25,7 +25,7 @@ class PlayerController:
                     MainView.print_exit()
                     exit()
                 case _:
-                    MainView.print_error_action()
+                    MainView.print_invalid_input()
                     continue
 
     def create_player(self):

@@ -38,4 +38,3 @@ class MatchView:
         print("3. Draw")
         choice = input("Enter the result of the match: ")
         return choice
-

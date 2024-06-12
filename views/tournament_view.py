@@ -56,6 +56,3 @@ class TournamentView:
     def get_tournament_notes(cls):
         tournament_notes = input("Enter your tournament notes here: ")
         return tournament_notes
-
-
-

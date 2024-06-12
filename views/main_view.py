@@ -4,8 +4,12 @@ class MainView:
         print(f"\n\x1b[32m{info}\x1b[0m")
 
     @staticmethod
-    def print_error_action():
+    def print_invalid_input():
         print(f"\n\x1b[33mInvalid input. Please enter a valid choice or a valid name.\x1b[0m")
+
+    @staticmethod
+    def print_error_action(info):
+        print(f"\n\x1b[33m{info}\x1b[0m")
 
     @staticmethod
     def print_exit():

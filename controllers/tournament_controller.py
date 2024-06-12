@@ -36,7 +36,7 @@ class TournamentController:
                     MainView.print_exit()
                     exit()
                 case _:
-                    MainView.print_error_action()
+                    MainView.print_invalid_input()
                     continue
             break
 
@@ -47,7 +47,7 @@ class TournamentController:
     def handle_tournament_selection(self, tournament_name):
         selected_tournament = self.tournament_manager.get_tournament(tournament_name)
         if not selected_tournament:
-            MainView.print_error_action()
+            MainView.print_invalid_input()
         else:
             while True:
                 choice = TournamentView.manage_selected_tournament(selected_tournament)
@@ -69,7 +69,7 @@ class TournamentController:
                         MainView.print_exit()
                         exit()
                     case _:
-                        MainView.print_error_action()
+                        MainView.print_invalid_input()
                         continue
 
     def create_tournament(self):
@@ -112,7 +112,7 @@ class TournamentController:
                     else:
                         self.save_player_to_tournament(tournament_name, selected_player)
             except ValueError:
-                MainView.print_error_action()
+                MainView.print_invalid_input()
 
     def save_player_to_tournament(self, tournament_name, player):
         tournament = self.tournament_manager.get_tournament(tournament_name)
@@ -167,9 +167,9 @@ class TournamentController:
                         self.handle_selected_round(selected_round, tournament_name)
 
                     else:
-                        MainView.print_error_action()
+                        MainView.print_invalid_input()
                 except ValueError:
-                    MainView.print_error_action()
+                    MainView.print_invalid_input()
                 break
 
     def handle_selected_round(self, selected_round, tournament_name):
@@ -193,7 +193,7 @@ class TournamentController:
                                     self.handle_match_choice(selected_round, selected_match, tournament_name)
 
                             except ValueError:
-                                MainView.print_error_action()
+                                MainView.print_invalid_input()
                 case "b":
                     tournament = self.tournament_manager.get_tournament(tournament_name)
                     TournamentView.manage_selected_tournament(tournament)
@@ -201,7 +201,7 @@ class TournamentController:
                     MainView.print_exit()
                     exit()
                 case _:
-                    MainView.print_error_action()
+                    MainView.print_invalid_input()
                     continue
 
     def generate_matches_for_round(self, selected_round, tournament_name):
@@ -268,7 +268,7 @@ class TournamentController:
                     MainView.print_exit()
                     exit()
                 case _:
-                    MainView.print_error_action()
+                    MainView.print_invalid_input()
                     continue
 
     def start_match(self, selected_round, tournament_name):
@@ -322,7 +322,7 @@ class TournamentController:
                     MainView.print_success_action("Draw match.")
                     break
                 case _:
-                    MainView.print_error_action()
+                    MainView.print_invalid_input()
                     continue
 
         self.player_manager.write_in_db(selected_match.player1)
