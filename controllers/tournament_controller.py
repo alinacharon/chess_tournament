@@ -195,7 +195,8 @@ class TournamentController:
                             except ValueError:
                                 MainView.print_error_action()
                 case "b":
-                    TournamentView.manage_tournaments_menu()
+                    tournament = self.tournament_manager.get_tournament(tournament_name)
+                    TournamentView.manage_selected_tournament(tournament)
                 case "q":
                     MainView.print_exit()
                     exit()
@@ -262,7 +263,7 @@ class TournamentController:
                     else:
                         MainView.print_info(f"The match {selected_match.name} has been already played")
                 case "b":
-                    TournamentView.manage_tournaments_menu()
+                    RoundView.manage_selected_round(selected_round)
                 case "q":
                     MainView.print_exit()
                     exit()
