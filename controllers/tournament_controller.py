@@ -296,7 +296,7 @@ class TournamentController:
             match.score2 = 1
             match.player2.total_points += match.score2
         else:
-            match.winner == "Draw"
+            match.winner = None
             match.score1 = 0.5
             match.score2 = 0.5
             match.player1.total_points += match.score1
@@ -316,7 +316,7 @@ class TournamentController:
 
                     break
                 case "3":
-                    self.set_result(selected_match, "Draw")
+                    self.set_result(selected_match, selected_match.winner)
 
                     MainView.print_success_action("Draw match.")
                     break
@@ -326,10 +326,10 @@ class TournamentController:
 
         self.player_manager.write_in_db(selected_match.player1)
         self.player_manager.write_in_db(selected_match.player2)
-        self.set_end_round_date(selected_round, tournament_name)
         self.update_tournament_with_match_result(tournament, selected_round, selected_match)
         self.tournament_manager.write_in_db(tournament)
         MainView.print_success_action(f"'{selected_match.name}' ended successfully.")
+        self.set_end_round_date(selected_round, tournament_name)
 
     def update_tournament_with_match_result(self, tournament, selected_round, selected_match):
         for round in tournament.rounds:
@@ -343,28 +343,19 @@ class TournamentController:
 
     def set_end_round_date(self, selected_round, tournament_name):
         tournament = self.tournament_manager.get_tournament(tournament_name)
-        print("Checking if all matches are finished...")
-        if self.round_is_finished(selected_round, tournament_name):
+        if self.round_is_finished(selected_round):
             selected_round.end_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            print(f"All matches finished, setting end date: {selected_round.end_date}")
             for round in tournament.rounds:
                 if round.round_id == selected_round.round_id:
                     round.end_date = selected_round.end_date
-                    break
+
+            MainView.print_success_action(f"All matches finished, setting for {selected_round.name} "
+                                          f"end date: {selected_round.end_date}")
             self.tournament_manager.write_in_db(tournament)
-            MainView.print_success_action("The current round has been ended!")
-        else:
-            print("Not all matches are finished yet.")
 
-    def round_is_finished(self, selected_round, tournament_name):
-        tournament = self.tournament_manager.get_tournament(tournament_name)
-        if not tournament:
-            MainView.print_info(f"Tournament {tournament_name} not found")
-            return False
+    def round_is_finished(self, selected_round):
 
-        all_matches_finished = all(match.winner is None for match in selected_round.matches)
+        all_matches_finished = all(match.score1 != 0 and match.score2 != 0 for match in selected_round.matches)
 
         if all_matches_finished:
-            MainView.print_success_action(f"All matches in round '{selected_round.name}' are finished.")
-
-        return all_matches_finished
+            return all_matches_finished
