@@ -1,3 +1,4 @@
+import os
 from models.managers.player_manager import PlayerManager
 from models.managers.tournament_manager import TournamentManager
 from views.main_view import MainView
@@ -8,6 +9,8 @@ class ReportsController:
     def __init__(self):
         self.player_manager = PlayerManager()
         self.tournament_manager = TournamentManager()
+        self.reports_folder = "reports"
+        os.makedirs(self.reports_folder, exist_ok=True)
 
     def reports_menu(self):
         choice = ReportsView.generate_reports_menu()
@@ -37,13 +40,15 @@ class ReportsController:
         """Generates a report of all players sorted alphabetically by last name."""
         players = self.player_manager.get_all_players()
         if not players:
-            print("No players found.")
+            MainView.print_error_action("No players found.")
             return
 
         players.sort(key=lambda p: p.last_name.lower())
-        MainView.print_info("\n--- All Players (Alphabetical Order) ---\n")
+        report_content = "\n--- All Players (Alphabetical Order) ---\n"
         for player in players:
-            MainView.print_info(f"- {player.last_name} {player.first_name}  ({player.player_id})")
+            report_content += f"- {player.last_name} {player.first_name} ({player.player_id})\n"
+
+        self.save_report("all_players_alphabetical.txt", report_content)
 
     def report_all_tournaments(self):
         """Generates a report listing all tournaments."""
@@ -52,23 +57,27 @@ class ReportsController:
             MainView.print_error_action("No tournaments found.")
             return
 
-        MainView.print_info("\n--- All Tournaments ---\n")
+        report_content = "\n--- All Tournaments ---\n"
         for tournament in tournaments:
-            MainView.print_info(f"- {tournament.name}")
+            report_content += f"- {tournament.name}\n"
+
+        self.save_report("all_tournaments.txt", report_content)
 
     def report_tournament_details(self):
         """Generates a report with name and dates for a specific tournament."""
         tournament_name = input("Enter tournament name: ")
         tournament = self.tournament_manager.get_tournament(tournament_name)
         if not tournament:
-            MainView.print_info(f"Tournament '{tournament_name}' not found.")
+            MainView.print_error_action(f"Tournament '{tournament_name}' not found.")
             return
 
-        MainView.print_info("\n--- Tournament Details ---\n")
-        MainView.print_info(f"Name: {tournament.name}")
-        MainView.print_info(f"Location: {tournament.location}")
-        MainView.print_info(f"Start Date: {tournament.start_date}")
-        MainView.print_info(f"End Date: {tournament.end_date}")
+        report_content = "\n--- Tournament Details ---\n"
+        report_content += f"Name: {tournament.name}\n"
+        report_content += f"Location: {tournament.location}\n"
+        report_content += f"Start Date: {tournament.start_date}\n"
+        report_content += f"End Date: {tournament.end_date}\n"
+
+        self.save_report(f"tournament_details_{tournament_name}.txt", report_content)
 
     def report_tournament_players_alphabetical(self):
         """Generates a report listing players in a tournament alphabetically."""
@@ -84,9 +93,11 @@ class ReportsController:
             return
 
         players.sort(key=lambda p: p.last_name.lower())
-        MainView.print_info(f"\n--- Players in '{tournament.name}' (Alphabetical Order) ---\n")
+        report_content = f"\n--- Players in '{tournament.name}' (Alphabetical Order) ---\n"
         for player in players:
-            MainView.print_info(f"- {player.last_name} {player.first_name} ({player.player_id})")
+            report_content += f"- {player.last_name} {player.first_name} ({player.player_id})\n"
+
+        self.save_report(f"tournament_players_{tournament_name}.txt", report_content)
 
     def report_tournament_rounds_and_matches(self):
         """Generates a report listing all rounds and matches in a tournament."""
@@ -96,9 +107,9 @@ class ReportsController:
             MainView.print_error_action(f"Tournament '{tournament_name}' not found.")
             return
 
-        MainView.print_info(f"\n--- Rounds and Matches in '{tournament.name}' ---\n")
+        report_content = f"\n--- Rounds and Matches in '{tournament.name}' ---\n"
         for i, round in enumerate(tournament.rounds):
-            MainView.print_info(f"{round.name}")
+            report_content += f"{round.name}: \n"
             for j, match in enumerate(round.matches):
                 player1 = self.player_manager.get_player(match.player1.player_id)
                 player2 = self.player_manager.get_player(match.player2.player_id)
@@ -106,4 +117,12 @@ class ReportsController:
                 player1_name = f"{player1.first_name} {player1.last_name}" if player1 else "Unknown"
                 player2_name = f"{player2.first_name} {player2.last_name}" if player2 else "Unknown"
 
-                MainView.print_info(f"  Match {j + 1}: {player1_name} vs {player2_name}")
+                report_content += f"  Match {j + 1}: {player1_name} vs {player2_name}\n"
+
+        self.save_report(f"tournament_rounds_and_matches_{tournament_name}.txt", report_content)
+
+    def save_report(self, filename, content):
+        """Saves the given content to a report file in the reports folder."""
+        with open(os.path.join(self.reports_folder, filename), 'w') as file:
+            file.write(content)
+        MainView.print_info(f"Report saved as {filename}")

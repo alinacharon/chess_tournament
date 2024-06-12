@@ -12,6 +12,8 @@ venv/
 
 *.log
 
-Data/*.json
+data/*.json
+reports/*.txt
+
 .DS_Store
 *.pyc
