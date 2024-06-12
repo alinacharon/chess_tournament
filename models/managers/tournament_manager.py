@@ -108,12 +108,3 @@ class TournamentManager:
             return tournament_data.get("rounds", [])
         return []
 
-    def get_round(self, tournament_name, round_id):
-        tournament_data = self.pull_data_for_tournament(tournament_name)
-        if tournament_data:
-            rounds = tournament_data.get("rounds", [])
-            for round_data in rounds:
-                if round_data.get("round_id") == round_id:
-                    return round_data
-        return None
-

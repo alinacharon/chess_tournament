@@ -53,27 +53,13 @@ class TournamentController:
                 choice = TournamentView.manage_selected_tournament(selected_tournament)
                 match choice:
                     case "1":
-                        self.add_players_to_tournament(tournament_name)
+                        self.register_players_to_tournament(tournament_name)
                     case "2":
                         MainView.print_info(selected_tournament)
                     case "3":
-                        if len(selected_tournament.registered_players) < 2:
-                            MainView.print_info("Error: Minimum of 2 players required to generate rounds.")
-                        else:
-                            if selected_tournament.rounds_num > 0:
-                                MainView.print_info(
-                                    f"Rounds for the tournament '{selected_tournament.name}' "
-                                    f"have already been generated.")
-                            else:
-                                self.generate_rounds(tournament_name)
-                                MainView.print_success_action(
-                                    f"Rounds for the tournament '{selected_tournament.name}' "
-                                    f"generated successfully.")
+                        self.generate_rounds(tournament_name)
                     case "4":
-                        if not selected_tournament.rounds:
-                            MainView.print_info("\nNo rounds yet. Please generate first.")
-                        else:
-                            self.get_round_selection(tournament_name)
+                        self.get_round_selection(tournament_name)
                     case "5":
                         self.add_notes_to_tournament(tournament_name)
                     case "b":
@@ -97,7 +83,6 @@ class TournamentController:
         self.tournament_manager.tournaments.append(tournament)
         self.tournament_manager.write_in_db(tournament)
         MainView.print_success_action(f"Tournament has been added successfully.")
-        # return tournament
 
     def is_tournament_name_exist(self, name):
         for tournament in self.tournament_manager.load_tournaments_from_json():
@@ -106,11 +91,11 @@ class TournamentController:
         return False
 
     def list_all_tournaments(self):
-        tournaments = self.tournament_manager.load_tournaments_from_json()
+        tournaments = self.tournament_manager.tournaments
         TournamentView.display_tournaments(tournaments)
         return True
 
-    def add_players_to_tournament(self, tournament_name):
+    def register_players_to_tournament(self, tournament_name):
         players = self.player_manager.get_all_players()
         PlayerView.display_players(players)
         while True:
@@ -125,27 +110,35 @@ class TournamentController:
                         MainView.print_info(f"\n{selected_player.name} is already registered for this tournament.\n")
                         continue
                     else:
-                        self.add_player_to_tournament(tournament_name, selected_player)
+                        self.save_player_to_tournament(tournament_name, selected_player)
             except ValueError:
                 MainView.print_error_action()
 
-    def add_player_to_tournament(self, tournament_name, player):
+    def save_player_to_tournament(self, tournament_name, player):
         tournament = self.tournament_manager.get_tournament(tournament_name)
-        if tournament:
-            tournament.registered_players.append(player)
-            self.tournament_manager.write_in_db(tournament)
-            MainView.print_info(f"{player.name} added to the tournament.")
-        else:
-            MainView.print_info(f"Tournament {tournament_name} not found")
+        tournament.registered_players.append(player)
+        self.tournament_manager.write_in_db(tournament)
+        MainView.print_info(f"{player.name} added to the tournament.")
 
     def generate_rounds(self, tournament_name):
         tournament = self.tournament_manager.get_tournament(tournament_name)
+        if tournament.rounds_num > 0:
+            MainView.print_info(
+                f"Rounds for the tournament '{tournament.name}' "
+                f"have already been generated.")
 
-        tournament.rounds_num = len(tournament.registered_players) - 1
-        for round_num in range(1, tournament.rounds_num + 1):
-            round = Round(f"Round {round_num}")
-            tournament.rounds.append(round)
-        self.tournament_manager.write_in_db(tournament)
+        elif len(tournament.registered_players) < 2:
+            MainView.print_info("Error: Minimum of 2 players required to generate rounds.")
+
+        else:
+            tournament.rounds_num = len(tournament.registered_players) - 1
+            for round_num in range(1, tournament.rounds_num + 1):
+                round = Round(f"Round {round_num}")
+                tournament.rounds.append(round)
+            self.tournament_manager.write_in_db(tournament)
+            MainView.print_success_action(
+                f"Rounds for the tournament '{tournament.name}' "
+                f"generated successfully.")
 
     def add_notes_to_tournament(self, tournament_name):
         tournament = self.tournament_manager.get_tournament(tournament_name)
@@ -155,26 +148,29 @@ class TournamentController:
         MainView.print_info(f"Notes added to the tournament.")
 
     def get_round_selection(self, tournament_name):
+        tournament = self.tournament_manager.get_tournament(tournament_name)
+        if not tournament.rounds:
+            MainView.print_info("\nNo rounds yet. Please generate first.")
+        else:
+            rounds_data = self.tournament_manager.get_rounds(tournament_name)
 
-        rounds_data = self.tournament_manager.get_rounds(tournament_name)
+            RoundView.display_rounds(rounds_data)
 
-        RoundView.display_rounds(rounds_data)
+            while True:
+                try:
+                    round_index = RoundView.get_round_selection()
+                    if round_index == 0:
+                        break
+                    elif 1 <= round_index <= len(rounds_data):
+                        selected_round_data = rounds_data[round_index - 1]
+                        selected_round = self.round_manager.round_to_dict(selected_round_data)
+                        self.handle_selected_round(selected_round, tournament_name)
 
-        while True:
-            try:
-                round_index = RoundView.get_round_selection()
-                if round_index == 0:
-                    break
-                elif 1 <= round_index <= len(rounds_data):
-                    selected_round_data = rounds_data[round_index - 1]
-                    selected_round = self.round_manager.round_to_dict(selected_round_data)
-                    self.handle_selected_round(selected_round, tournament_name)
-
-                else:
+                    else:
+                        MainView.print_error_action()
+                except ValueError:
                     MainView.print_error_action()
-            except ValueError:
-                MainView.print_error_action()
-            break
+                break
 
     def handle_selected_round(self, selected_round, tournament_name):
         while True:
@@ -245,8 +241,6 @@ class TournamentController:
         tournament = self.tournament_manager.get_tournament(tournament_name)
 
         for round in tournament.rounds:
-            if isinstance(round, dict):
-                round = self.tournament_manager.get_round(tournament_name, round_id)
             if round.round_id == round_id:
                 round.matches.append(match)
                 break
