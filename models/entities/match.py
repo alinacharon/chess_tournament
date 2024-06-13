@@ -13,10 +13,10 @@ class Match:
         self.round = round
 
     def __str__(self):
-        if self.winner is None:
+        if self.score2 == 0 and self.score2 == 0:
             return f"{self.player1.name} ({self.score1}) vs. {self.player2.name} ({self.score2}) - Not finished"
-        elif self.winner == "Draw match":
-            return f"{self.player1.name} ({self.score1}) vs. {self.player2.name} ({self.score2}) - Draw"
+        elif self.winner is None:
+            return f"{self.player1.name} ({self.score1}) vs. {self.player2.name} ({self.score2}) - Draw match"
         else:
             return (f"{self.player1.name} ({self.score1}) vs. {self.player2.name} "
                     f"({self.score2}) - Winner: {self.winner.name}")

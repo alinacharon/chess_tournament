@@ -7,15 +7,14 @@ class MatchView:
 
     @classmethod
     def get_match_selection(cls):
-        match_index = int(input("Enter the number corresponding to the match to start "
+        match_index = int(input("Enter the number corresponding to the match to set "
                                 "(or 0 to go back): "))
         return match_index
 
     @classmethod
     def manage_match_selection(cls, match):
-        print(f"\n--- Menu for {match.name}:  ---")
-        print("1. Start the match ---")
-        print("2. End the match ---")
+        print(f"\n--- Menu for {match.name}:  ")
+        print("1. Set the match result ")
         print("b. Back")
         print("q. Quit")
         choice = input("Enter your choice: ")
@@ -38,3 +37,9 @@ class MatchView:
         print("3. Draw")
         choice = input("Enter the result of the match: ")
         return choice
+
+    @classmethod
+    def display_generated_matches(cls, selected_round):
+        print(f"\n--- Generated Matches for {selected_round.name} ---")
+        for match in selected_round.matches:
+            print(f"- {match.name}: {match.player1.name} vs. {match.player2.name}")

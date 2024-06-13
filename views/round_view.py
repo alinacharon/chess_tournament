@@ -15,10 +15,11 @@ class RoundView:
 
     @classmethod
     def manage_selected_round(cls, round):
-        print(f"\n--- Manage Matches for {round.name} ---\n")
-        print("1. Generate Matches")
-        print("2. Select Match")
-        print("b. Back to Tournament Menu")
+        print(f"\n--- Manage {round.name} ---\n")
+        print("1. Start the round")
+        print("2. Generate Matches")
+        print("3. Select Match")
+        print("b. Back to Round Selection")
         print("q. Quit")
         choice = input("Enter your choice: ")
         return choice

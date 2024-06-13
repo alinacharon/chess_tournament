@@ -13,8 +13,8 @@ class ReportsController:
         os.makedirs(self.reports_folder, exist_ok=True)
 
     def reports_menu(self):
-        choice = ReportsView.generate_reports_menu()
         while True:
+            choice = ReportsView.generate_reports_menu()
             match choice:
                 case "1":
                     self.report_all_players_alphabetical()
@@ -28,6 +28,7 @@ class ReportsController:
                     self.report_tournament_rounds_and_matches()
                 case "b":
                     MainView.main_menu()
+                    break
                 case "q":
                     MainView.print_exit()
                     exit()
@@ -125,4 +126,4 @@ class ReportsController:
         """Saves the given content to a report file in the reports folder."""
         with open(os.path.join(self.reports_folder, filename), 'w') as file:
             file.write(content)
-        MainView.print_info(f"Report saved as {filename}")
+        MainView.print_success_action(f"Report saved as {filename}")

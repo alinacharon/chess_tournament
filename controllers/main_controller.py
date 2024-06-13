@@ -26,3 +26,4 @@ class MainController:
                 case _:
                     MainView.print_invalid_input()
                     continue
+
