@@ -6,7 +6,7 @@ class RoundView:
         else:
             print("\n--- Tournament Rounds ---\n")
             for i, round in enumerate(rounds):
-                print(f"{i + 1}. {round["name"]}")
+                print(f"{i + 1}. {round['name']}")
 
     @classmethod
     def get_round_selection(cls):

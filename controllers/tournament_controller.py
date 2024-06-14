@@ -30,7 +30,6 @@ class TournamentController:
                 case "3":
                     self.get_tournament_selection()
                 case "b":
-                    MainView.main_menu()
                     break
                 case "q":
                     MainView.print_exit()
@@ -62,8 +61,7 @@ class TournamentController:
                     case "5":
                         self.add_notes_to_tournament(tournament_name)
                     case "b":
-                        self.tournament_menu()
-                        break
+                        return
                     case "q":
                         MainView.print_exit()
                         exit()
@@ -81,7 +79,7 @@ class TournamentController:
         tournament = Tournament(**information)
         self.tournament_manager.tournaments.append(tournament)
         self.tournament_manager.write_in_db(tournament)
-        MainView.print_success_action(f"Tournament has been added successfully.")
+        MainView.print_success_action("Tournament has been added successfully.")
 
     def is_tournament_name_exist(self, name):
         for tournament in self.tournament_manager.load_tournaments_from_json():
@@ -97,7 +95,8 @@ class TournamentController:
     def register_players_to_tournament(self, tournament_name):
         tournament = self.tournament_manager.get_tournament(tournament_name)
         if tournament.rounds:
-            MainView.print_error_action(f"You cannot register new players for the tournament with generated Rounds.")
+            MainView.print_error_action("New players cannot be registered for a tournament once "
+                                        "the rounds have been generated.")
         else:
             players = self.player_manager.get_all_players()
             PlayerView.display_players(players)
@@ -148,9 +147,9 @@ class TournamentController:
     def add_notes_to_tournament(self, tournament_name):
         tournament = self.tournament_manager.get_tournament(tournament_name)
         notes = TournamentView.get_tournament_notes()
-        tournament.notes += notes + f" "
+        tournament.notes += notes
         self.tournament_manager.write_in_db(tournament)
-        MainView.print_success_action(f"Notes added to the tournament.")
+        MainView.print_success_action("Notes added to the tournament.")
 
     def get_round_selection(self, tournament_name):
         tournament = self.tournament_manager.get_tournament(tournament_name)
@@ -317,8 +316,10 @@ class TournamentController:
             match choice:
                 case "1":
                     self.set_result(selected_match, selected_match.player1)
+                    MainView.print_success_action(f"{selected_match.player1} wins the match!")
                 case "2":
                     self.set_result(selected_match, selected_match.player2)
+                    MainView.print_success_action(f"{selected_match.player2} wins the match!")
                 case "3":
                     self.set_result(selected_match, selected_match.winner)
                     MainView.print_success_action("Draw match.")

@@ -27,7 +27,6 @@ class ReportsController:
                 case "5":
                     self.report_tournament_rounds_and_matches()
                 case "b":
-                    MainView.main_menu()
                     break
                 case "q":
                     MainView.print_exit()

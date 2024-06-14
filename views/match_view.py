@@ -1,11 +1,6 @@
 class MatchView:
 
     @classmethod
-    def display_match(cls, match):
-        print(f"\n--- Match: {match.name} ---")
-        print(f"  {match.player1.name} vs. {match.player2.name}")
-
-    @classmethod
     def get_match_selection(cls):
         match_index = int(input("Enter the number corresponding to the match to set "
                                 "(or 0 to go back): "))

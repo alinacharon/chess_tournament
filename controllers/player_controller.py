@@ -19,7 +19,6 @@ class PlayerController:
                 case "2":
                     self.list_all_players()
                 case "b":
-                    MainView.main_menu()
                     break
                 case "q":
                     MainView.print_exit()
