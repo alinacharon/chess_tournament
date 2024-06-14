@@ -113,7 +113,6 @@ class TournamentController:
                             continue
                         else:
                             self.save_player_to_tournament(tournament_name, selected_player)
-                            continue
                 except ValueError:
                     MainView.print_invalid_input()
                 break
