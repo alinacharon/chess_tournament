@@ -3,6 +3,7 @@ from models.managers.player_manager import PlayerManager
 from models.managers.tournament_manager import TournamentManager
 from views.main_view import MainView
 from views.reports_view import ReportsView
+from views.tournament_view import TournamentView
 
 
 class ReportsController:
@@ -65,7 +66,7 @@ class ReportsController:
 
     def report_tournament_details(self):
         """Generates a report with name and dates for a specific tournament."""
-        tournament_name = input("Enter tournament name: ")
+        tournament_name = TournamentView.get_tournament_selection()
         tournament = self.tournament_manager.get_tournament(tournament_name)
         if not tournament:
             MainView.print_error_action(f"Tournament '{tournament_name}' not found.")
@@ -81,7 +82,7 @@ class ReportsController:
 
     def report_tournament_players_alphabetical(self):
         """Generates a report listing players in a tournament alphabetically."""
-        tournament_name = input("Enter tournament name: ")
+        tournament_name = TournamentView.get_tournament_selection()
         tournament = self.tournament_manager.get_tournament(tournament_name)
         if not tournament:
             MainView.print_error_action(f"Tournament '{tournament_name}' not found.")
@@ -101,7 +102,7 @@ class ReportsController:
 
     def report_tournament_rounds_and_matches(self):
         """Generates a report listing all rounds and matches in a tournament."""
-        tournament_name = input("Enter tournament name: ")
+        tournament_name = TournamentView.get_tournament_selection()
         tournament = self.tournament_manager.get_tournament(tournament_name)
         if not tournament:
             MainView.print_error_action(f"Tournament '{tournament_name}' not found.")
