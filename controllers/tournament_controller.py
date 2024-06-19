@@ -61,7 +61,7 @@ class TournamentController:
                     case "5":
                         self.add_notes_to_tournament(tournament_name)
                     case "b":
-                        return
+                        break
                     case "q":
                         MainView.print_exit()
                         exit()
@@ -76,10 +76,11 @@ class TournamentController:
             MainView.print_error_action(f"Tournament name '{information['name']}' "
                                         f"already exists. Please choose another name.")
 
-        tournament = Tournament(**information)
-        self.tournament_manager.tournaments.append(tournament)
-        self.tournament_manager.write_in_db(tournament)
-        MainView.print_success_action("Tournament has been added successfully.")
+        else:
+            tournament = Tournament(**information)
+            self.tournament_manager.tournaments.append(tournament)
+            self.tournament_manager.write_in_db(tournament)
+            MainView.print_success_action(f"Tournament '{information['name']}' has been added successfully.")
 
     def is_tournament_name_exist(self, name):
         for tournament in self.tournament_manager.load_tournaments_from_json():
