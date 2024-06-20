@@ -30,9 +30,21 @@ class PlayerController:
     def create_player(self):
         information = PlayerView().get_players_info()
         player = Player(**information)
-        self.player_manager.write_in_db(player)
-        MainView.print_success_action(f"Player {player.name} has been added.")
-        return True
+
+        if self.is_player_id_exist(information["player_id"]):
+            MainView.print_error_action(f"The player with this ID' {information['player_id']}' "
+                                        f"already exists.")
+
+        else:
+            self.player_manager.write_in_db(player)
+            MainView.print_success_action(f"Player {player.name} has been added.")
+            return True
+
+    def is_player_id_exist(self, player_id):
+        for player in self.player_manager.load_players_from_json():
+            if player.player_id == player_id:
+                return True
+        return False
 
     def list_all_players(self):
         players = self.player_manager.get_all_players()
