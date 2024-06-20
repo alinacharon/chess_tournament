@@ -45,7 +45,7 @@ class TournamentView:
             print("b. Back to Tournaments Menu")
             print("q. Quit")
             choice = input("Enter your choice: ")
-            return choice
+            return choice.strip().lower()
 
     @classmethod
     def get_player_selection(cls):

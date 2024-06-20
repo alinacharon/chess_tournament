@@ -46,6 +46,7 @@ class TournamentController:
         selected_tournament = self.tournament_manager.get_tournament(tournament_name)
         if not selected_tournament:
             MainView.print_invalid_input()
+            return
         else:
             while True:
                 choice = TournamentView.manage_selected_tournament(selected_tournament)
@@ -57,7 +58,7 @@ class TournamentController:
                     case "3":
                         self.generate_rounds(tournament_name)
                     case "4":
-                        self.get_round_selection(tournament_name)
+                        self.handle_round_selection(tournament_name)
                     case "5":
                         self.add_notes_to_tournament(tournament_name)
                     case "b":
@@ -151,30 +152,22 @@ class TournamentController:
         self.tournament_manager.write_in_db(tournament)
         MainView.print_success_action("Notes added to the tournament.")
 
-    def get_round_selection(self, tournament_name):
+    def handle_round_selection(self, tournament_name):
         tournament = self.tournament_manager.get_tournament(tournament_name)
         if not tournament.rounds:
             MainView.print_error_action("\nNo rounds yet. Please generate first.")
+            return
         else:
             rounds_data = self.tournament_manager.get_rounds(tournament_name)
-
-            RoundView.display_rounds(rounds_data)
-
-            while True:
-                try:
-                    round_index = RoundView.get_round_selection()
-                    if round_index == 0:
-                        TournamentView.manage_selected_tournament(tournament)
-                    elif 1 <= round_index <= len(rounds_data):
-                        selected_round_data = rounds_data[round_index - 1]
-                        selected_round = self.round_manager.round_to_dict(selected_round_data)
-                        self.handle_selected_round(selected_round, tournament_name)
-
-                    else:
-                        MainView.print_invalid_input()
-                except ValueError:
-                    MainView.print_invalid_input()
-                break
+            round_index = RoundView.get_round_selection(rounds_data)
+            if round_index == 0:
+                return
+            elif 1 <= round_index <= len(rounds_data):
+                selected_round_data = rounds_data[round_index - 1]
+                selected_round = self.round_manager.round_to_dict(selected_round_data)
+                self.handle_selected_round(selected_round, tournament_name)
+            else:
+                MainView.print_invalid_input()
 
     def handle_selected_round(self, selected_round, tournament_name):
         while True:
@@ -203,7 +196,6 @@ class TournamentController:
                 case "4":
                     self.set_end_round_date(selected_round, tournament_name)
                 case "b":
-                    self.get_round_selection(tournament_name)
                     break
                 case "q":
                     MainView.print_exit()
@@ -356,7 +348,7 @@ class TournamentController:
                     round.end_date = selected_round.end_date
 
             MainView.print_success_action(f"{selected_round.name} is finished, "
-                                              f"end date: {selected_round.end_date}")
+                                          f"end date: {selected_round.end_date}")
             self.tournament_manager.write_in_db(tournament)
         else:
             MainView.print_error_action(f"You have already ended the {selected_round.name}!")

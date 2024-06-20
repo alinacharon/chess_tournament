@@ -46,9 +46,9 @@ class ReportsController:
             return
 
         players.sort(key=lambda p: p.last_name.lower())
-        report_content = "\n--- All Players (Alphabetical Order) ---\n"
+        report_content = "\n--- All Players (Alphabetical Order) ---\n\n"
         for player in players:
-            report_content += f"- {player.last_name} {player.first_name} ({player.player_id})\n"
+            report_content += f"- {player}\n"
 
         self.save_report("all_players_alphabetical.txt", report_content)
 
@@ -59,7 +59,7 @@ class ReportsController:
             MainView.print_error_action("No tournaments found.")
             return
 
-        report_content = "\n--- All Tournaments ---\n"
+        report_content = "\n--- All Tournaments ---\n\n"
         for tournament in tournaments:
             report_content += f"- {tournament}\n"
 
@@ -73,7 +73,7 @@ class ReportsController:
             MainView.print_error_action(f"Tournament '{tournament_name}' not found.")
             return
 
-        report_content = "\n--- Tournament Details ---\n"
+        report_content = "\n--- Tournament Details ---\n\n"
         report_content += f"Name: {tournament.name}\n"
         report_content += f"Location: {tournament.location}\n"
         report_content += f"Start Date: {tournament.start_date}\n"
@@ -95,9 +95,9 @@ class ReportsController:
             return
 
         players.sort(key=lambda p: p.last_name.lower())
-        report_content = f"\n--- Players in Tournament'{tournament.name}' (Alphabetical Order) ---\n"
+        report_content = f"\n--- Players in Tournament'{tournament.name}' (Alphabetical Order) ---\n\n"
         for player in players:
-            report_content += f"- {player.last_name} {player.first_name} ({player.player_id})\n"
+            report_content += f"- {player}\n"
 
         self.save_report(f"tournament_players_{tournament_name}.txt", report_content)
 

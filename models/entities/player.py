@@ -19,4 +19,4 @@ class Player:
         return f'{self.first_name} {self.last_name}'
 
     def __str__(self):
-        return f"{self.name} ({self.player_id}), born {self.birthdate}"
+        return f"{self.name} ({self.player_id}), born {self.birthdate}, total points: {self.total_points}"

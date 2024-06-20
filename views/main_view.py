@@ -13,7 +13,7 @@ class MainView:
 
     @staticmethod
     def print_exit():
-        print("\n\x1b[34mExiting program. Goodbye!\x1b[0m")
+        print("\n\x1b[34mExiting program. Goodbye!\x1b[0m\n")
 
     @staticmethod
     def print_info(info):
