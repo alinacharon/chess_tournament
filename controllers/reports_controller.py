@@ -1,4 +1,5 @@
 import os
+
 from models.managers.player_manager import PlayerManager
 from models.managers.tournament_manager import TournamentManager
 from views.main_view import MainView
@@ -60,7 +61,7 @@ class ReportsController:
 
         report_content = "\n--- All Tournaments ---\n"
         for tournament in tournaments:
-            report_content += f"- {tournament.name}\n"
+            report_content += f"- {tournament}\n"
 
         self.save_report("all_tournaments.txt", report_content)
 
@@ -108,17 +109,11 @@ class ReportsController:
             MainView.print_error_action(f"Tournament '{tournament_name}' not found.")
             return
 
-        report_content = f"\n--- Rounds and Matches in '{tournament.name}' ---\n"
+        report_content = f"\n--- Rounds and Matches in the Tournament'{tournament.name}' ---\n\n"
         for i, round in enumerate(tournament.rounds):
-            report_content += f"{round.name}: \n"
+            report_content += f"{round.name}, Start: {round.start_date}, End: {round.end_date} \n"
             for j, match in enumerate(round.matches):
-                player1 = self.player_manager.get_player(match.player1.player_id)
-                player2 = self.player_manager.get_player(match.player2.player_id)
-
-                player1_name = f"{player1.first_name} {player1.last_name}" if player1 else "Unknown"
-                player2_name = f"{player2.first_name} {player2.last_name}" if player2 else "Unknown"
-
-                report_content += f"  Match {j + 1}: {player1_name} vs {player2_name}\n"
+                report_content += f"  Match {j + 1}: {match}\n\n"
 
         self.save_report(f"tournament_rounds_and_matches_{tournament_name}.txt", report_content)
 
