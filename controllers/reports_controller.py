@@ -94,7 +94,7 @@ class ReportsController:
             return
 
         players.sort(key=lambda p: p.last_name.lower())
-        report_content = f"\n--- Players in '{tournament.name}' (Alphabetical Order) ---\n"
+        report_content = f"\n--- Players in Tournament'{tournament.name}' (Alphabetical Order) ---\n"
         for player in players:
             report_content += f"- {player.last_name} {player.first_name} ({player.player_id})\n"
 
