@@ -19,6 +19,7 @@ class RoundView:
         print("1. Start the round")
         print("2. Generate Matches")
         print("3. Select Match")
+        print("4. End the round")
         print("b. Back to Round Selection")
         print("q. Quit")
         choice = input("Enter your choice: ")
