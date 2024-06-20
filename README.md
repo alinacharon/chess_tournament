@@ -30,7 +30,7 @@ The project is organized into the following main components:
 ## Getting Started
 
 ### Prerequisites
-- Python 3.8 or higher
+- Python 3.10 or higher
 
 ### Installation
 Install required packages:
