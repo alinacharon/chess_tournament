@@ -16,7 +16,7 @@ class Player:
 
     @property
     def name(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'{self.last_name} {self.first_name}'
 
     def __str__(self):
         return f"{self.name} ({self.player_id}), born {self.birthdate}, total points: {self.total_points}"
